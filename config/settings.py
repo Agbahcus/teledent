@@ -46,6 +46,17 @@ DEBUG = _env_bool("DJANGO_DEBUG", default=True)
 
 ALLOWED_HOSTS = _env_list("DJANGO_ALLOWED_HOSTS", default=["127.0.0.1", "localhost"])
 
+# PaaS convenience: auto-allow the platform-provided public domain when present.
+# This prevents common 400 "DisallowedHost" issues if you forget to set DJANGO_ALLOWED_HOSTS.
+for _host_env in ("RAILWAY_PUBLIC_DOMAIN", "RENDER_EXTERNAL_HOSTNAME"):
+    _host = os.environ.get(_host_env)
+    if _host and _host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(_host)
+
+# Escape hatch for hobby/demo environments (prefer setting DJANGO_ALLOWED_HOSTS instead).
+if _env_bool("DJANGO_ALLOW_ALL_HOSTS", default=False):
+    ALLOWED_HOSTS = ["*"]
+
 
 # Application definition
 
@@ -169,6 +180,11 @@ LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'landing'
 
 CSRF_TRUSTED_ORIGINS = _env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
+
+if not CSRF_TRUSTED_ORIGINS:
+    _railway_domain = os.environ.get("RAILWAY_PUBLIC_DOMAIN")
+    if _railway_domain:
+        CSRF_TRUSTED_ORIGINS = [f"https://{_railway_domain}"]
 
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
