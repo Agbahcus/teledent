@@ -718,15 +718,21 @@ h3{letter-spacing:0;color:var(--ink)}
 
 .main{
   margin-top:72px;
-  margin-left:260px;
+  margin-left:0;
   padding:32px;
   background:transparent;
 }
 .main--no-sidebar{margin-left:0}
 .app-footer{
-  margin-left:260px;
+  margin-left:0;
   background:transparent;
   border-top:1px solid var(--line);
+}
+
+/* Desktop layout: persistent sidebar */
+@media (min-width: 900px){
+  .main{margin-left:260px}
+  .app-footer{margin-left:260px}
 }
 
 .card,.auth-card,.dashboard-panel,.side-card,.preview{
