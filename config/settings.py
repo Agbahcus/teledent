@@ -186,6 +186,11 @@ if not CSRF_TRUSTED_ORIGINS:
     if _railway_domain:
         CSRF_TRUSTED_ORIGINS = [f"https://{_railway_domain}"]
 
+# Upload limits (Django defaults are ~2.5MB, which can break phone photo uploads).
+# Keep these reasonably small for a showcase app; tune via env vars if needed.
+DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("DJANGO_DATA_UPLOAD_MAX_MEMORY_SIZE", str(10 * 1024 * 1024)))
+FILE_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("DJANGO_FILE_UPLOAD_MAX_MEMORY_SIZE", str(10 * 1024 * 1024)))
+
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = _env_bool("DJANGO_SECURE_SSL_REDIRECT", default=True)
