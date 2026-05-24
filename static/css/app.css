@@ -567,13 +567,15 @@ h3{font-size:18px;font-weight:600;color:var(--dark-gray);margin:0 0 var(--gap)}
     border-bottom: 8px solid var(--light-gray); /* Mobile card separation */
   }
   .two-col,.two-col-60{grid-template-columns:1fr}
+  .two-col,.two-col-60{gap:16px}
+  .side-card,.preview{padding:16px}
+  .thumbs{gap:10px}
 }
 
 @media (min-width: 641px) and (max-width: 1024px){
   .sidebar{width:160px}
   .main{margin-left:160px}
   .app-footer{margin-left:160px}
-  .two-col-60{grid-template-columns: 60% 40%}
 }
 
 /* Modern visual refresh */
