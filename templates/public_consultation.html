@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}Submit Consultation - teledent{% endblock %}
+{% block content %}
+  <div class="auth-page" style="align-items:flex-start">
+    <div class="card" style="width:100%;max-width:720px;box-shadow:none">
+      <div class="card-pad">
+        <div class="page-kicker">Remote consultation</div>
+        <h2 style="margin-bottom:6px">{{ profile.full_name }}</h2>
+        <div class="text-sm" style="margin-bottom:24px">
+          {{ profile.get_specialty_display|default:"Dentist" }}{% if profile.state %} in {{ profile.state }}{% endif %}
+          {% if profile.consultation_fee %} | NGN {{ profile.consultation_fee|floatformat:0 }} per consultation{% endif %}
+        </div>
+
+        <form method="post" class="form" enctype="multipart/form-data" novalidate id="public-consultation-form">
+          {% csrf_token %}
+
+          <div class="form-stepper" data-stepper="true" aria-label="Consultation steps">
+            <div class="form-stepper__top">
+              <div class="form-stepper__title">Step <span data-stepper-current>1</span> of <span data-stepper-total>3</span></div>
+              <div class="form-stepper__pct" data-stepper-pct>33%</div>
+            </div>
+            <div class="form-stepper__bar" role="progressbar" aria-valuemin="1" aria-valuemax="3" aria-valuenow="1" aria-label="Progress">
+              <div class="form-stepper__barFill" data-stepper-bar></div>
+            </div>
+            <div class="form-stepper__dots" aria-hidden="true">
+              <div class="form-stepper__dot is-active" data-stepper-dot="0"></div>
+              <div class="form-stepper__dot" data-stepper-dot="1"></div>
+              <div class="form-stepper__dot" data-stepper-dot="2"></div>
+            </div>
+          </div>
+
+          <div class="step" data-step="1">
+            <div class="field {% if form.patient_name.errors %}field-error{% endif %}">
+              <label class="label" for="{{ form.patient_name.id_for_label }}">Full Name</label>
+              <input class="input" type="text" name="{{ form.patient_name.name }}" id="{{ form.patient_name.id_for_label }}" value="{{ form.patient_name.value|default_if_none:'' }}" placeholder="Your full name" required />
+              {% for e in form.patient_name.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+            </div>
+
+            <div class="row" style="gap:16px;align-items:flex-start">
+              <div class="field {% if form.patient_phone.errors %}field-error{% endif %}" style="flex:1;min-width:220px">
+                <label class="label" for="{{ form.patient_phone.id_for_label }}">Phone Number</label>
+                <input class="input" type="tel" name="{{ form.patient_phone.name }}" id="{{ form.patient_phone.id_for_label }}" value="{{ form.patient_phone.value|default_if_none:'' }}" placeholder="08012345678" required />
+                {% for e in form.patient_phone.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+              </div>
+
+              <div class="field {% if form.patient_email.errors %}field-error{% endif %}" style="flex:1;min-width:220px">
+                <label class="label" for="{{ form.patient_email.id_for_label }}">Email Address</label>
+                <input class="input" type="email" name="{{ form.patient_email.name }}" id="{{ form.patient_email.id_for_label }}" value="{{ form.patient_email.value|default_if_none:'' }}" placeholder="you@example.com" required />
+                {% for e in form.patient_email.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+              </div>
+            </div>
+
+            <div class="row" style="margin-top:12px;justify-content:space-between;width:100%">
+              <div></div>
+              <div>
+                <button type="button" class="btn btn-secondary" data-step-next>Next</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="step" data-step="2" style="display:none">
+            <div class="row" style="gap:16px;align-items:flex-start">
+              <div class="field {% if form.pain_level.errors %}field-error{% endif %}" style="flex:1;min-width:180px">
+                <label class="label" for="{{ form.pain_level.id_for_label }}">Pain Level (0-10)</label>
+                <input class="input" type="number" min="0" max="10" name="{{ form.pain_level.name }}" id="{{ form.pain_level.id_for_label }}" value="{{ form.pain_level.value|default:'0' }}" required />
+                {% for e in form.pain_level.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+              </div>
+
+              <div class="field {% if form.symptom_duration.errors %}field-error{% endif %}" style="flex:1;min-width:220px">
+                <label class="label" for="{{ form.symptom_duration.id_for_label }}">How long has this been happening?</label>
+                <select class="select" name="{{ form.symptom_duration.name }}" id="{{ form.symptom_duration.id_for_label }}" required>
+                  {% for value,label in form.fields.symptom_duration.choices %}
+                    <option value="{{ value }}" {% if form.symptom_duration.value == value %}selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
+                {% for e in form.symptom_duration.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+              </div>
+            </div>
+
+            <div class="field" style="margin-top:12px">
+              <label class="label">Select any symptoms you have</label>
+              <div class="symptom-grid">
+                <label class="symptom-chip">
+                  <input class="symptom-chip__input" type="checkbox" name="{{ form.has_swelling.name }}" {% if form.has_swelling.value %}checked{% endif %} />
+                  <span class="symptom-chip__label">Swelling</span>
+                </label>
+                <label class="symptom-chip">
+                  <input class="symptom-chip__input" type="checkbox" name="{{ form.has_bleeding.name }}" {% if form.has_bleeding.value %}checked{% endif %} />
+                  <span class="symptom-chip__label">Bleeding</span>
+                </label>
+                <label class="symptom-chip">
+                  <input class="symptom-chip__input" type="checkbox" name="{{ form.has_fever.name }}" {% if form.has_fever.value %}checked{% endif %} />
+                  <span class="symptom-chip__label">Fever</span>
+                </label>
+                <label class="symptom-chip">
+                  <input class="symptom-chip__input" type="checkbox" name="{{ form.has_trauma.name }}" {% if form.has_trauma.value %}checked{% endif %} />
+                  <span class="symptom-chip__label">Injury or trauma</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="row" style="margin-top:12px;justify-content:space-between;width:100%">
+              <button type="button" class="btn btn-neutral" data-step-prev>Back</button>
+              <button type="button" class="btn btn-secondary" data-step-next>Next</button>
+            </div>
+          </div>
+
+          <div class="step" data-step="3" style="display:none">
+            <div class="field {% if form.patient_complaint.errors %}field-error{% endif %}">
+              <label class="label" for="{{ form.patient_complaint.id_for_label }}">Dental Concern</label>
+              <textarea class="textarea" name="{{ form.patient_complaint.name }}" id="{{ form.patient_complaint.id_for_label }}" placeholder="Describe your dental concern" required>{{ form.patient_complaint.value|default_if_none:'' }}</textarea>
+              {% for e in form.patient_complaint.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+            </div>
+
+            <div class="field {% if image_errors %}field-error{% endif %}">
+              <label class="label" for="images">Photos</label>
+              <input class="input" type="file" id="images" name="images" accept="image/png,image/jpeg,image/webp" multiple />
+              <div class="hint">Upload up to 3 clear photos. JPG, PNG, or WEBP. Max 5MB each.</div>
+              <div id="image-preview" style="display:flex;gap:8px;margin-top:8px"></div>
+              {% for e in image_errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+            </div>
+
+            <div style="display:flex;gap:12px;align-items:center;flex-direction:column;margin-top:12px">
+              <div class="skeleton-loader" id="skeleton" style="display:none;width:100%"></div>
+              <div style="display:flex;gap:8px;width:100%">
+                <button type="button" class="btn btn-neutral" data-step-prev style="flex:1">Back</button>
+                <button class="btn btn-primary btn-full" type="submit" id="submit-btn" style="flex:2">Submit Consultation</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

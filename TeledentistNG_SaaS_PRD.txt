@@ -1,0 +1,867 @@
+================================================================================
+TELEDENTISTRY NG - DENTIST CONSULTATION DASHBOARD (SaaS)
+Detailed Product Requirements Document - Text Format
+================================================================================
+
+SECTION 1: DESIGN SYSTEM
+================================================================================
+
+COLOR PALETTE:
+- Primary Blue: #1e3a8a (professional, medical, trustworthy)
+- Light Blue: #dbeafe (backgrounds, subtle accents)
+- Dark Gray: #1f2937 (text, headers)
+- Medium Gray: #6b7280 (secondary text)
+- Light Gray: #f3f4f6 (backgrounds, borders)
+- White: #ffffff (content areas)
+- Success Green: #10b981 (confirmation, positive states)
+- Warning Orange: #f59e0b (alerts, pending)
+- Error Red: #ef4444 (errors, urgent)
+
+TYPOGRAPHY:
+- Font Family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif (system fonts, no external)
+- Body Text: 14px, line-height 1.6, color #1f2937
+- Small Text: 12px, line-height 1.5, color #6b7280
+- Headers (H1): 28px, bold, color #1e3a8a
+- Headers (H2): 22px, bold, color #1f2937
+- Headers (H3): 18px, semi-bold, color #1f2937
+- Buttons: 14px, semi-bold, all-caps (for dentist action buttons)
+
+SPACING:
+- Padding around content: 24px
+- Margin between sections: 20px
+- Gap between components: 12px
+- Gap between form fields: 16px
+- Border radius: 6px (buttons, cards, inputs)
+- Border thickness: 1px, color #e5e7eb
+
+SHADOWS:
+- Card shadow: 0px 1px 3px rgba(0,0,0,0.1)
+- Hover shadow: 0px 4px 6px rgba(0,0,0,0.15)
+- Modal shadow: 0px 20px 25px rgba(0,0,0,0.2)
+
+
+================================================================================
+SECTION 2: LAYOUT STRUCTURE (All Pages)
+================================================================================
+
+NAVIGATION BAR (Top, Fixed):
+Position: Top of page, full width, fixed (stays visible while scrolling)
+Background: White
+Height: 64px
+Padding: 12px 24px
+Border-bottom: 1px solid #e5e7eb
+Shadow: Subtle (0px 1px 3px rgba(0,0,0,0.1))
+
+Left Side of Nav:
+- Logo + Text: "teledent" (14px, bold, #1e3a8a)
+
+Right Side of Nav:
+- Dentist Name: "[Dr. Name]" (12px, #6b7280)
+- Separator: "|"
+- Link "Logout" (12px, #1e3a8a, hover: underline)
+
+SIDEBAR (Left, Fixed, Only when logged in):
+Position: Left of page, full height, fixed
+Width: 240px
+Background: #f3f4f6
+Border-right: 1px solid #e5e7eb
+
+Sidebar Items (Vertical Stack):
+1. Dashboard (Icon: home, text: "Dashboard")
+   - When active: Background #dbeafe, text #1e3a8a, bold
+   - When inactive: Background transparent, text #6b7280
+   - Padding: 12px 16px, left-border: 4px #1e3a8a (if active)
+
+2. Consultations (Icon: file-text, text: "Consultations")
+   - Sub-items (indented 16px):
+     - New (shows count badge: red circle with white number)
+     - In Review
+     - Responded
+     - All
+   
+3. Profile (Icon: user, text: "Profile")
+
+4. Settings (Icon: gear, text: "Settings")
+
+All sidebar items:
+- Height: 40px
+- Padding: 0px 12px
+- Font: 13px, #1f2937
+- Hover: Background #e5e7eb
+- Cursor: pointer
+- Transition: all 0.2s ease
+
+
+MAIN CONTENT AREA:
+Position: Right of sidebar
+Margin-left: 240px
+Margin-top: 64px (below navbar)
+Padding: 24px
+Background: White
+Min-height: 100vh
+
+
+================================================================================
+SECTION 3: PAGE SPECIFICATIONS
+================================================================================
+
+PAGE 1: HOME / LANDING (Not logged in)
+================================================================================
+
+Header Section (Full width, above fold):
+Background: Linear gradient (top: #1e3a8a, bottom: #dbeafe)
+Height: 280px
+Padding: 40px 24px
+Text align: center
+
+Content:
+- Large Title: "teledent" (36px, bold, white)
+- Subtitle: "Organize Your Remote Consultations" (18px, white)
+- Description: "Help your patients get answers without waiting. Manage all consultations in one place." (16px, white, margin-top 16px)
+
+Buttons (Centered, margin-top 32px):
+- "Sign In as Dentist" (Button: #1e3a8a bg, white text, 48px height, 12px padding horizontal, border-radius 6px)
+- "Sign Up as Dentist" (Button: white bg, #1e3a8a text, 48px height, 12px padding horizontal, border 2px solid #1e3a8a)
+- Buttons side-by-side, gap 12px
+
+Below Header (White background):
+- Section: "How It Works" (centered, 320px max-width)
+  Step 1: "Create Account" → "Sign up in 2 minutes"
+  Step 2: "Get Your Link" → "Share with patients"
+  Step 3: "Manage Consultations" → "Review and respond"
+  Step 4: "Build Reputation" → "Patient ratings"
+  (Each step: icon on left, text on right, vertical stack, margin between 20px)
+
+Footer:
+- Text: "© 2025 teledent. For dentists in Nigeria."
+- Text: "Made with care for dental professionals"
+- Color: #6b7280
+- Background: #f3f4f6
+- Padding: 24px
+- Text align: center
+
+
+PAGE 2: REGISTER
+================================================================================
+
+Layout: Centered card
+- Width: 100% on mobile, 400px on desktop
+- Centered vertically and horizontally
+- Background: White
+- Padding: 40px
+- Border-radius: 6px
+- Shadow: 0px 4px 6px rgba(0,0,0,0.1)
+
+Title: "Create Dentist Account" (22px, bold, #1f2937, margin-bottom 24px)
+
+Form Fields (Vertical stack, gap 16px):
+1. Label: "Full Name" (12px, bold, color #1f2937)
+   Input field: Full width, height 40px, padding 8px 12px, border 1px #e5e7eb, border-radius 6px
+   Placeholder: "Dr. Chioma Obi"
+   
+2. Label: "Email Address" (12px, bold)
+   Input: email type
+   Placeholder: "chioma@clinic.com"
+   
+3. Label: "Phone Number" (12px, bold)
+   Input: tel type
+   Placeholder: "08012345678"
+   Hint text below: "Nigerian format (08xxxxxxxxx)" (11px, #6b7280)
+   
+4. Label: "Password" (12px, bold)
+   Input: password type
+   Placeholder: "Min 8 characters"
+   
+5. Label: "Confirm Password" (12px, bold)
+   Input: password type
+
+6. Checkbox: "I agree to Terms of Service" (12px, #6b7280)
+   Link text: "Terms" (12px, #1e3a8a, underline on hover)
+
+Button: "CREATE ACCOUNT" (Full width, 44px height, #1e3a8a background, white text, bold)
+Hover state: Background #1e40af (slightly darker)
+Disabled state: Background #d1d5db, cursor not-allowed
+
+Below button:
+- Text: "Already have an account? " + Link "Sign In" (12px, #1e3a8a, underline on hover)
+
+
+PAGE 3: LOGIN
+================================================================================
+
+Layout: Same centered card as register (400px width on desktop)
+
+Title: "Sign In to Your Dashboard" (22px, bold, #1f2937)
+
+Form Fields:
+1. Email field
+2. Password field
+3. Checkbox: "Remember me" (12px)
+
+Button: "SIGN IN" (Full width, 44px)
+
+Below button:
+- Text: "Don't have an account? " + Link "Sign Up" (12px, #1e3a8a)
+- Text: "Forgot password?" (12px, #1e3a8a) [PHASE 2]
+
+
+PAGE 4: PROFILE SETUP (First time after registration)
+================================================================================
+
+Layout: Two-column (desktop) or single column (mobile)
+Left column: 60% of width
+Right column: 40% of width
+Gap: 24px
+
+LEFT COLUMN: Form
+Background: White
+Padding: 24px
+Border-radius: 6px
+
+Title: "Complete Your Profile" (22px, bold, #1f2937)
+Description: "Add your professional details" (14px, #6b7280, margin-bottom 24px)
+
+Form Fields (Vertical stack, gap 16px):
+1. Label: "License Number" (12px, bold, red asterisk for required)
+   Input: text
+   Placeholder: "Your dental license number"
+   Help text: "Used to verify your credentials" (11px, #6b7280)
+
+2. Label: "Specialty" (12px, bold, red asterisk)
+   Dropdown: 
+   - General Dentistry
+   - Orthodontics
+   - Prosthodontics
+   - Pediatric Dentistry
+   - Oral Surgery
+   - Periodontics
+   - Endodontics
+   - Cosmetic Dentistry
+   - Other
+   Background: White, border 1px #e5e7eb, height 40px
+
+3. Label: "State" (12px, bold, red asterisk)
+   Dropdown with Nigerian states:
+   - Lagos
+   - Abuja
+   - Ibadan
+   - Benin City
+   - Enugu
+   - Kano
+   - etc.
+
+4. Label: "Local Government Area (LGA)" (12px, bold)
+   Input: text (optional)
+   Placeholder: "e.g., Ikoyi, Lekki"
+
+5. Label: "Bio / Professional Summary" (12px, bold)
+   Textarea: Width 100%, height 120px, padding 8px 12px
+   Placeholder: "Brief description of your practice and experience"
+   Character count: "0/200" (right-aligned, 11px, #6b7280)
+   Max length: 200 characters
+
+6. Label: "Consultation Fee (₦)" (12px, bold, red asterisk)
+   Input: number
+   Placeholder: "5000"
+   Prefix: "₦"
+   Help text: "Suggested: ₦3,000 - ₦10,000" (11px, #6b7280)
+
+Button: "SAVE PROFILE" (Full width, 44px, #1e3a8a)
+
+RIGHT COLUMN: Visual Preview
+Background: #f3f4f6
+Padding: 24px
+Border-radius: 6px
+Title: "Your Profile Preview" (14px, bold, #1f2937)
+
+Preview Card:
+- Name: "[Dr. Name from registration]" (16px, bold, #1f2937)
+- Specialty: "[Selected specialty]" (12px, #6b7280)
+- Location: "[State], [LGA]" (12px, #6b7280)
+- Fee: "₦[Amount] per consultation" (13px, #1e3a8a, bold)
+- Bio: "[First 100 chars of bio]..." (12px, #1f2937)
+- Placeholder: "This is how patients will see you" (11px, #6b7280, centered at top)
+
+
+PAGE 5: DASHBOARD (Main after login)
+================================================================================
+
+Top Section: Stats Cards (Horizontal row)
+Gap between cards: 16px
+Each card:
+- Background: White
+- Padding: 20px
+- Border-radius: 6px
+- Shadow: 0px 1px 3px rgba(0,0,0,0.1)
+- Min-width: 200px
+
+Card 1: "New Consultations"
+- Large number in #1e3a8a (32px, bold)
+- Label below: "Awaiting your review" (12px, #6b7280)
+
+Card 2: "In Review"
+- Large number in #f59e0b (32px, bold)
+- Label: "Currently reviewing" (12px, #6b7280)
+
+Card 3: "Responded"
+- Large number in #10b981 (32px, bold)
+- Label: "Awaiting patient rating" (12px, #6b7280)
+
+Card 4: "Average Rating"
+- Large number in #1e3a8a (32px, bold) - e.g., "4.8"
+- Stars below: 5 yellow stars (★★★★★) (12px)
+- Label: "Out of 5" (12px, #6b7280)
+
+Below Stats: Main Consultations Section
+Title: "Your Consultations" (18px, bold, #1f2937)
+
+Filter Tabs (Horizontal, below title):
+- "ALL" (default active)
+- "NEW" (with red badge showing count)
+- "IN REVIEW"
+- "RESPONDED"
+
+Active tab: Underline #1e3a8a, text #1e3a8a, bold
+Inactive tab: Text #6b7280, underline transparent
+
+Consultations List (Table format on desktop, card format on mobile):
+Columns: Patient Name | Complaint | Submitted | Status | Action
+
+Each row (as card on mobile):
+- Background: White
+- Padding: 16px
+- Border-radius: 6px
+- Border: 1px #e5e7eb
+- Margin-bottom: 12px
+- On hover: Shadow increase, cursor pointer
+
+Table columns:
+1. "Patient Name" (13px, bold, #1f2937)
+2. "Complaint" (13px, #6b7280, max 50 chars, truncate with "...")
+3. "Submitted" (12px, #6b7280) - e.g., "2 hours ago"
+4. "Status" (Badge):
+   - "NEW" → Red background (#ef4444), white text
+   - "IN REVIEW" → Orange background (#f59e0b), white text
+   - "RESPONDED" → Green background (#10b981), white text
+5. "Action" (Link: "VIEW" in #1e3a8a, underline on hover)
+
+If no consultations: Centered message
+- Icon: Empty box (SVG or emoji)
+- Text: "No consultations yet" (16px, #6b7280)
+- Subtext: "Share your link to start receiving questions" (13px, #6b7280)
+
+Pagination (if many consultations):
+- "1 2 3 ... 10" (12px, #1f2937)
+- Active page: #1e3a8a, bold
+- Inactive pages: #6b7280, clickable
+- Gap between numbers: 8px
+
+
+PAGE 6: VIEW CONSULTATION (Click on a consultation)
+================================================================================
+
+Layout: Two columns
+Left: 70% - Consultation details
+Right: 30% - Info sidebar
+
+LEFT COLUMN: Consultation Details
+Background: White
+Padding: 24px
+
+Header Section:
+- Title: "Consultation from [Patient Name]" (20px, bold, #1f2937)
+- Submitted time: "Submitted 3 hours ago" (12px, #6b7280)
+- Patient phone: "[Patient phone number]" (12px, #6b7280)
+
+Divider: 1px #e5e7eb, margin 16px 0
+
+Patient Complaint Section:
+Label: "Patient's Complaint" (13px, bold, #1f2937)
+Complaint text: (14px, #1f2937, line-height 1.6, margin-top 8px)
+Background: #f3f4f6, padding 16px, border-radius 6px
+
+Photos Section (if photos uploaded):
+Label: "Photos" (13px, bold, #1f2937, margin-top 20px)
+Each photo:
+- Thumbnail: 120px x 120px
+- Border-radius: 6px
+- Margin-right: 12px
+- On hover: Opacity 0.8, cursor pointer
+- Click: Open in modal/lightbox
+
+Response Section (appears after dentist submits response):
+Background: #f0fdf4 (light green)
+Padding: 16px
+Border-radius: 6px
+Border-left: 4px solid #10b981
+
+Title: "Your Response" (13px, bold, #1f2937)
+
+Sub-sections (each margin-top 16px):
+- "Diagnosis:" (13px, bold, #1f2937) + "[Your diagnosis text]" (13px, #1f2937)
+- "Treatment Plan:" (13px, bold) + "[Your plan text]"
+- "Medications:" (13px, bold) + "[Your meds]" (or "None prescribed")
+- "Follow-up:" (13px, bold) + "[Your follow-up instructions]"
+
+Rating Section (appears after response, if patient rated):
+Background: #fef3c7 (light yellow)
+Padding: 16px
+Border-radius: 6px
+Margin-top: 16px
+
+Stars: ★★★★★ (yellow, 16px)
+Comment: "[Patient's optional rating comment]" (12px, #6b7280, italic)
+
+
+RIGHT COLUMN: Info Sidebar
+Background: #f3f4f6
+Padding: 20px
+Border-radius: 6px
+
+Section 1: "Status"
+Large badge: "IN REVIEW" (16px, bold, orange background, white text)
+Margin-bottom: 16px
+
+Section 2: "Quick Actions"
+Buttons (full width, stacked):
+- If status "NEW" or "IN REVIEW": "MARK AS REVIEWING" (Button)
+- If status "IN REVIEW": "SUBMIT RESPONSE" (Button, primary color)
+- If status "RESPONDED": "MARK RESOLVED" (Button)
+
+Button style: Full width, 40px height, margin-bottom 8px
+
+Section 3: "Patient Info"
+- Phone: "[Number]" (12px, #1f2937)
+- Email: "[Email]" (12px, #1f2937)
+- Submitted: "[Date & time]" (12px, #6b7280)
+- Response deadline: "Due today at 5:00 PM" (12px, #f59e0b, bold)
+
+Section 4: "Timeline"
+List of events (vertical):
+- "Submitted" - 2 hours ago
+- "You started reviewing" - 30 mins ago
+(Each event: small dot, timestamp, text)
+
+
+PAGE 7: RESPOND TO CONSULTATION (Modal or separate page)
+================================================================================
+
+Layout: Form in a modal or full page
+Width: 100% on mobile, 700px max on desktop
+
+Header:
+- Close button (X icon, top-right, if modal)
+- Title: "Respond to [Patient Name]'s Consultation" (20px, bold, #1f2937)
+
+Form Fields (Vertical stack, gap 20px):
+
+1. "Diagnosis" (13px, bold, red asterisk)
+   Textarea: Full width, height 120px, padding 12px
+   Placeholder: "What did you diagnose based on the patient's complaint and photos?"
+   Character count: "0/500" (right-aligned, 11px, #6b7280)
+   Validation: Min 10 chars
+
+2. "Treatment Plan" (13px, bold, red asterisk)
+   Textarea: Full width, height 120px, padding 12px
+   Placeholder: "What treatment should the patient consider? Should they come in-person?"
+   Character count: "0/500"
+   Validation: Min 10 chars
+
+3. "Medications (Optional)" (13px, bold)
+   Textarea: Full width, height 80px, padding 12px
+   Placeholder: "Any medications you recommend? (e.g., Ibuprofen 400mg twice daily)"
+   Character count: "0/300"
+
+4. "Follow-up Instructions" (13px, bold, red asterisk)
+   Textarea: Full width, height 100px, padding 12px
+   Placeholder: "When should they return for follow-up? What should they watch for?"
+   Character count: "0/300"
+   Validation: Min 10 chars
+
+Auto-save indicator (bottom-left):
+- Small text: "Auto-saving..." (11px, #6b7280, visible while typing)
+- Changes to "Saved" (11px, #10b981) after 2 seconds of no typing
+
+Buttons (Bottom, horizontal):
+- "CANCEL" (Button: white bg, #1f2937 text, border 1px #e5e7eb, 44px height)
+- "SUBMIT RESPONSE" (Button: #1e3a8a bg, white text, 44px height)
+- Gap between buttons: 12px
+- Buttons left-aligned, full width on mobile
+
+On submit:
+- Button shows loading spinner (if non-instant)
+- Success message: "Response submitted! Patient will be notified." (green, #10b981)
+- Redirect to dashboard or show updated consultation
+
+
+PAGE 8: PROFILE / SETTINGS
+================================================================================
+
+Layout: Two tabs below title
+
+Title: "Your Profile" (22px, bold, #1f2937)
+
+Tabs:
+- "PROFILE" (active by default)
+- "SETTINGS"
+
+TAB 1: PROFILE
+Background: White
+Padding: 24px
+Border-radius: 6px
+
+Editable fields (same as profile setup):
+- Full name
+- Email
+- Phone
+- License number
+- Specialty
+- State / LGA
+- Bio
+- Consultation fee
+
+Each field:
+- Label: 12px, bold
+- Input: Full width, 40px height (except textarea)
+- Current value shown in field
+- On edit: Border color changes to #1e3a8a
+
+Button: "SAVE CHANGES" (Full width, 44px, #1e3a8a, appears after any edit)
+
+Dangerous zone (red-bordered section, margin-top 40px):
+- Title: "Danger Zone" (13px, bold, #ef4444)
+- Button: "DELETE ACCOUNT" (44px, #ef4444 background, white text)
+- Confirmation modal: "Are you sure? This cannot be undone."
+
+TAB 2: SETTINGS
+Background: White
+Padding: 24px
+Border-radius: 6px
+
+Settings list:
+1. "Notification Preferences" (13px, bold)
+   Toggle: "Send SMS when new consultation arrives" (toggle ON/OFF)
+   Toggle: "Send email summaries" (toggle ON/OFF)
+   
+2. "Consultation Settings" (13px, bold, margin-top 20px)
+   Field: "Expected response time (hours)" (12px, bold)
+   Input: number field with value "24"
+   Help text: "Patients will see this as your expected response time"
+
+3. "Display Settings" (13px, bold, margin-top 20px)
+   Toggle: "Dark mode" (toggle, [PHASE 2])
+
+
+PAGE 9: YOUR LINK (To share with patients)
+================================================================================
+
+Layout: Centered card
+
+Title: "Share Your Consultation Link" (20px, bold, #1f2937)
+Description: "Give this link to your patients to submit consultations" (13px, #6b7280, margin-bottom 24px)
+
+Link Display Box:
+- Background: #f3f4f6
+- Padding: 16px
+- Border-radius: 6px
+- Border: 1px dashed #1e3a8a
+- Display full URL in monospace font based on current host, e.g. "https://your-domain.com/dentist/dr-chioma-lagos" (13px, #1f2937)
+
+Buttons:
+- "COPY LINK" (Button: white bg, #1e3a8a text, border 1px #1e3a8a, 40px)
+- Feedback on click: "Copied!" (green text, 2 second display)
+
+Below link:
+- QR Code: Generate and display QR code that links to consultation page (100px x 100px)
+
+Suggestions:
+- Text: "Share on:" (12px, #6b7280, margin-top 24px)
+- Suggested places: WhatsApp, Instagram, clinic wall, business cards, etc. (12px, #6b7280)
+
+
+================================================================================
+SECTION 4: FORM INTERACTIONS & STATES
+================================================================================
+
+INPUT FIELD STATES:
+
+Default state:
+- Border: 1px #e5e7eb
+- Background: white
+- Text color: #1f2937
+- Placeholder color: #9ca3af
+
+Focus state:
+- Border: 2px #1e3a8a
+- Background: white
+- Outline: none
+- Shadow: 0px 0px 0px 3px rgba(30, 58, 138, 0.1)
+
+Error state:
+- Border: 2px #ef4444
+- Background: #fef2f2
+- Error text below field: "This field is required" (11px, #ef4444, margin-top 4px)
+
+Disabled state:
+- Background: #f3f4f6
+- Color: #9ca3af
+- Cursor: not-allowed
+- Opacity: 0.6
+
+BUTTON STATES:
+
+Default state:
+- Background: #1e3a8a
+- Color: white
+- Border: none
+- Cursor: pointer
+- Height: 44px (standard), 40px (small), 36px (extra small)
+- Padding: 0px 16px
+- Font: 13px, bold
+- Border-radius: 6px
+- Transition: all 0.2s ease
+
+Hover state:
+- Background: #1e40af (darker shade of blue)
+- Shadow: 0px 4px 6px rgba(0,0,0,0.1)
+- Transform: translateY(-1px) [subtle lift]
+
+Active/Click state:
+- Background: #172555 (even darker)
+- Transform: translateY(0px)
+
+Disabled state:
+- Background: #d1d5db
+- Color: #9ca3af
+- Cursor: not-allowed
+- Shadow: none
+
+Secondary button (white bg, blue text):
+- Background: white
+- Color: #1e3a8a
+- Border: 1px solid #1e3a8a
+- Hover: Background #dbeafe
+
+BADGES & LABELS:
+
+Status Badge:
+- NEW: Red background (#ef4444), white text, 12px, bold, padding 4px 8px, border-radius 4px
+- IN REVIEW: Orange background (#f59e0b), white text
+- RESPONDED: Green background (#10b981), white text
+
+Count Badge (on sidebar):
+- Red circle, white number, 20px diameter, positioned top-right of parent
+
+
+================================================================================
+SECTION 5: RESPONSIVE DESIGN
+================================================================================
+
+BREAKPOINTS:
+- Mobile: 0px - 640px
+- Tablet: 641px - 1024px
+- Desktop: 1025px+
+
+MOBILE (0-640px):
+- Sidebar: Hidden (toggle via hamburger menu)
+- Main content: Full width
+- Grid layouts: 1 column instead of 2+
+- Cards: Stack vertically
+- Buttons: Full width
+- Font sizes: Reduced by 2px where appropriate
+- Padding: Reduced to 16px (instead of 24px)
+
+TABLET (641px-1024px):
+- Sidebar: Visible but narrower (160px)
+- Two-column layouts: 60/40 ratio
+- Cards: Side-by-side where applicable
+
+DESKTOP (1025px+):
+- Full layout as specified above
+- Multi-column grids
+- Proper spacing throughout
+
+
+================================================================================
+SECTION 6: DATA MODELS (Simplified, No External Payments)
+================================================================================
+
+USER MODEL:
+- id: UUID
+- email: Email (unique)
+- phone: Phone (format: 080xxxxxxxx or +2348xxxxxxxx)
+- password_hash: String
+- user_type: String (always "dentist" in this version)
+- created_at: DateTime
+- is_verified: Boolean (default False)
+
+DENTIST PROFILE:
+- id: UUID
+- user_id: FK → User
+- license_number: String (unique)
+- full_name: String
+- specialty: String (choices: General, Ortho, Prostho, Pediatric, Oral Surgery, Perio, Endo, Cosmetic, Other)
+- state: String (Nigerian state)
+- lga: String (optional)
+- bio: String (max 200 chars)
+- consultation_fee: Decimal (in NGN)
+- response_time_hours: Integer (default 24)
+- average_rating: Float (calculated from consultations)
+- total_consultations: Integer (auto-increment)
+- created_at: DateTime
+
+CONSULTATION:
+- id: UUID
+- dentist_id: FK → DentistProfile
+- patient_name: String
+- patient_phone: String
+- patient_email: String
+- patient_complaint: String (required)
+- status: String (choices: NEW, IN_REVIEW, RESPONDED, RESOLVED)
+- dentist_diagnosis: String (null until responded)
+- dentist_treatment_plan: String (null until responded)
+- dentist_medications: String (null until responded)
+- dentist_follow_up: String (null until responded)
+- dentist_response_date: DateTime (null until responded)
+- rating: Integer (1-5, null until rated)
+- rating_comment: String (optional)
+- created_at: DateTime
+- resolved_at: DateTime (null until resolved)
+
+CONSULTATION_IMAGE:
+- id: UUID
+- consultation_id: FK → Consultation
+- image_file: String (path to local media file)
+- uploaded_at: DateTime
+- Note: Max 3 images per consultation
+
+
+================================================================================
+SECTION 7: KEY BEHAVIORS & UX PATTERNS
+================================================================================
+
+AUTO-SAVE BEHAVIOR:
+- When dentist is typing in response form, auto-save every 10 seconds
+- Don't save if nothing changed
+- Show "Auto-saving..." indicator (small text, bottom-left of form)
+- After 2 seconds of no typing, show "Saved" in green
+- On page reload/close: Warn user if unsaved changes ("You have unsaved changes")
+
+REAL-TIME STATUS UPDATES (Without WebSockets):
+- Dashboard consultations list: Refresh every 30 seconds (silently, via AJAX)
+- New consultation arrives: Show a subtle notification (toast/banner at top)
+- Toast message: "New consultation from [name]" (green background, #10b981)
+- Toast auto-dismisses after 5 seconds
+
+NAVIGATION AFTER ACTIONS:
+- After profile setup: Redirect to dashboard
+- After submitting response: Redirect to dashboard, show success message
+- After rating submission: Show "Thank you for your response" message
+- Messages auto-dismiss after 5 seconds
+
+EMPTY STATES:
+- "No consultations yet": Centered, with icon + helpful text
+- Suggest: "Share your link to get started"
+- Button: "COPY YOUR LINK" (primary color)
+
+ERROR MESSAGES:
+- Display below field that caused error
+- Color: #ef4444 (red)
+- Font: 11px
+- Icon: Exclamation mark (!)
+- Example: "⚠ Password must be at least 8 characters"
+
+SUCCESS MESSAGES:
+- Toast notification (top-right, green background #10b981, white text)
+- Icon: Checkmark (✓)
+- Text: "Action completed successfully"
+- Auto-dismiss after 4 seconds
+- Or: Can manually close (X button)
+
+
+================================================================================
+SECTION 8: MOCK/PLACEHOLDER FEATURES (For Hobby Phase)
+================================================================================
+
+MOCK SMS NOTIFICATIONS:
+- Instead of actual SMS: Log to console or database log
+- Show in UI: "✓ SMS would be sent to [phone]"
+- In dashboard: Show mock notification history in Settings tab
+
+MOCK EMAIL NOTIFICATIONS:
+- Instead of actual email: Save to local file or log
+- Show in UI: "✓ Email would be sent to [email]"
+- Subject line preview shown
+
+MOCK PAYMENT FLOW:
+- "Payment" button simply creates the consultation (no actual charge)
+- No Paystack integration
+- UI says: "✓ Consultation created (payment mocked)"
+
+AUTHENTICATION:
+- No external OAuth
+- Django sessions with secure cookies
+- Password hashing: Django built-in
+- Remember me: Sets session timeout to 30 days
+
+
+================================================================================
+SECTION 9: PAGES TO BUILD
+================================================================================
+
+1. landing.html
+2. register.html
+3. login.html
+4. profile_setup.html
+5. dashboard.html
+6. view_consultation.html
+7. respond_consultation.html (modal or separate page)
+8. profile_settings.html
+9. your_link.html
+
+Static Components:
+- base.html (navbar + sidebar + footer)
+- navbar.html (included in base)
+- sidebar.html (included in base)
+
+API Endpoints Needed:
+- POST /register
+- POST /login
+- POST /logout
+- GET /dashboard
+- GET /dentist/profile
+- POST /dentist/profile
+- GET /consultations
+- GET /consultations/{id}
+- POST /consultations/{id}/respond
+- POST /consultations/{id}/rate
+- GET /dentist/link
+- POST /dentist/update-settings
+
+
+================================================================================
+SECTION 10: BUILD PRIORITY
+================================================================================
+
+Phase 1 (MVP - Core flow):
+1. Landing + Register + Login
+2. Profile setup
+3. Dashboard (view consultations)
+4. View single consultation
+5. Respond to consultation
+
+Phase 2 (Polish):
+1. Profile settings
+2. Your link page
+3. Rating system
+4. Auto-save implementation
+
+Phase 3 (Nice-to-have):
+1. Search/filter by date
+2. Export consultation history
+3. Bulk actions
+4. Email preferences
+
+================================================================================
+END OF PRD
+================================================================================

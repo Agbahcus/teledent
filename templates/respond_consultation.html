@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% block title %}Respond - teledent{% endblock %}
+{% block content %}
+  <div style="max-width:700px">
+    <div class="card card-pad" style="box-shadow:none">
+      <div style="font-size:20px;font-weight:700;color:var(--dark-gray);margin-bottom:20px">
+        Respond to {{ consultation.patient_name }}'s Consultation
+      </div>
+
+      <div class="triage-strip" style="margin-bottom:20px">
+        <div>
+          <div class="text-xs" style="font-weight:800;text-transform:uppercase">Triage</div>
+          <div style="font-weight:700">{{ consultation.triage_summary }}</div>
+        </div>
+        <span class="urgency urgency--{{ consultation.urgency }}">{{ consultation.urgency }}</span>
+      </div>
+
+      {% if templates %}
+        <div class="field" style="margin-bottom:20px">
+          <label class="label" for="templatePicker">Response template</label>
+          <select class="select" id="templatePicker">
+            <option value="">Start from blank response</option>
+            {% for template in templates %}
+              <option
+                value="{{ template.id }}"
+                data-diagnosis="{{ template.diagnosis|escape }}"
+                data-treatment="{{ template.treatment_plan|escape }}"
+                data-medications="{{ template.medications|escape }}"
+                data-follow-up="{{ template.follow_up|escape }}"
+              >{{ template.title }}</option>
+            {% endfor %}
+          </select>
+          <div class="hint">Templates reduce repeated typing for common cases.</div>
+        </div>
+      {% endif %}
+
+      <form method="post" class="form" novalidate id="respondForm">
+        {% csrf_token %}
+
+        <div class="field {% if form.dentist_diagnosis.errors %}field-error{% endif %}">
+          <label class="label" for="{{ form.dentist_diagnosis.id_for_label }}">Diagnosis<span class="req">*</span></label>
+          <textarea class="textarea" name="{{ form.dentist_diagnosis.name }}" id="{{ form.dentist_diagnosis.id_for_label }}" style="height:120px" maxlength="500" placeholder="What did you diagnose based on the patient's complaint and photos?">{{ form.dentist_diagnosis.value|default_if_none:'' }}</textarea>
+          <div class="text-xs" style="text-align:right" data-count-for="{{ form.dentist_diagnosis.id_for_label }}">0/500</div>
+          {% for e in form.dentist_diagnosis.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if form.dentist_treatment_plan.errors %}field-error{% endif %}">
+          <label class="label" for="{{ form.dentist_treatment_plan.id_for_label }}">Treatment Plan<span class="req">*</span></label>
+          <textarea class="textarea" name="{{ form.dentist_treatment_plan.name }}" id="{{ form.dentist_treatment_plan.id_for_label }}" style="height:120px" maxlength="500" placeholder="What treatment should the patient consider? Should they come in-person?">{{ form.dentist_treatment_plan.value|default_if_none:'' }}</textarea>
+          <div class="text-xs" style="text-align:right" data-count-for="{{ form.dentist_treatment_plan.id_for_label }}">0/500</div>
+          {% for e in form.dentist_treatment_plan.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if form.dentist_medications.errors %}field-error{% endif %}">
+          <label class="label" for="{{ form.dentist_medications.id_for_label }}">Medications (Optional)</label>
+          <textarea class="textarea" name="{{ form.dentist_medications.name }}" id="{{ form.dentist_medications.id_for_label }}" style="height:80px" maxlength="300" placeholder="Any medications you recommend? (e.g., Ibuprofen 400mg twice daily)">{{ form.dentist_medications.value|default_if_none:'' }}</textarea>
+          <div class="text-xs" style="text-align:right" data-count-for="{{ form.dentist_medications.id_for_label }}">0/300</div>
+          {% for e in form.dentist_medications.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if form.dentist_follow_up.errors %}field-error{% endif %}">
+          <label class="label" for="{{ form.dentist_follow_up.id_for_label }}">Follow-up Instructions<span class="req">*</span></label>
+          <textarea class="textarea" name="{{ form.dentist_follow_up.name }}" id="{{ form.dentist_follow_up.id_for_label }}" style="height:100px" maxlength="300" placeholder="When should they return for follow-up? What should they watch for?">{{ form.dentist_follow_up.value|default_if_none:'' }}</textarea>
+          <div class="text-xs" style="text-align:right" data-count-for="{{ form.dentist_follow_up.id_for_label }}">0/300</div>
+          {% for e in form.dentist_follow_up.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if form.follow_up_due.errors %}field-error{% endif %}">
+          <label class="label" for="{{ form.follow_up_due.id_for_label }}">Follow-up Due Date</label>
+          <input class="input" type="date" name="{{ form.follow_up_due.name }}" id="{{ form.follow_up_due.id_for_label }}" value="{{ form.follow_up_due.value|date:'Y-m-d' }}" />
+          <div class="hint">Adds this consultation to your follow-up queue.</div>
+          {% for e in form.follow_up_due.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="text-xs" id="autosaveIndicator" style="color:var(--medium-gray)">Auto-saving...</div>
+
+        <div class="row row-start" style="gap:12px;margin-top:4px">
+          <a class="btn btn-neutral" href="{% url 'view_consultation' consultation.id %}" style="height:44px">Cancel</a>
+          <button class="btn btn-primary" type="submit" style="height:44px">Submit Response</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const form = document.getElementById('respondForm');
+      const indicator = document.getElementById('autosaveIndicator');
+      const fields = Array.from(form.querySelectorAll('textarea'));
+      const key = 'respondDraft:' + '{{ consultation.id }}';
+      let lastSerialized = '';
+      let dirty = false;
+      let typingTimer = null;
+
+      function serialize(){
+        const data = {};
+        fields.forEach((t)=>{ data[t.name] = t.value || ''; });
+        return JSON.stringify(data);
+      }
+      function loadDraft(){
+        try{
+          const raw = localStorage.getItem(key);
+          if(!raw) return;
+          const data = JSON.parse(raw);
+          fields.forEach((t)=>{ if(typeof data[t.name] === 'string' && !t.value){ t.value = data[t.name]; } });
+        }catch(e){}
+      }
+      function updateCounts(){
+        fields.forEach((t)=>{
+          const counter = form.querySelector('[data-count-for=\"'+t.id+'\"]');
+          if(counter){
+            const max = t.getAttribute('maxlength') || '';
+            counter.textContent = (t.value||'').length + '/' + max;
+          }
+        });
+      }
+      function setSaved(){
+        indicator.textContent = 'Saved';
+        indicator.style.color = 'var(--success-green)';
+      }
+      function setSaving(){
+        indicator.textContent = 'Auto-saving...';
+        indicator.style.color = 'var(--medium-gray)';
+      }
+      function autosaveTick(){
+        const now = serialize();
+        if(now === lastSerialized) return;
+        localStorage.setItem(key, now);
+        lastSerialized = now;
+        dirty = false;
+      }
+
+      loadDraft();
+      updateCounts();
+      lastSerialized = serialize();
+
+      fields.forEach((t)=>{
+        t.addEventListener('input', ()=>{
+          dirty = true;
+          setSaving();
+          updateCounts();
+          if(typingTimer) window.clearTimeout(typingTimer);
+          typingTimer = window.setTimeout(setSaved, 2000);
+        });
+      });
+
+      const interval = window.setInterval(autosaveTick, 10000);
+
+      window.addEventListener('beforeunload', (e)=>{
+        if(!dirty) return;
+        e.preventDefault();
+        e.returnValue = 'You have unsaved changes';
+      });
+
+      form.addEventListener('submit', ()=>{
+        window.clearInterval(interval);
+        localStorage.removeItem(key);
+        dirty = false;
+      });
+
+      const templatePicker = document.getElementById('templatePicker');
+      if(templatePicker){
+        templatePicker.addEventListener('change', ()=>{
+          const selected = templatePicker.options[templatePicker.selectedIndex];
+          if(!selected || !selected.value) return;
+          const map = {
+            '{{ form.dentist_diagnosis.id_for_label }}': selected.dataset.diagnosis,
+            '{{ form.dentist_treatment_plan.id_for_label }}': selected.dataset.treatment,
+            '{{ form.dentist_medications.id_for_label }}': selected.dataset.medications,
+            '{{ form.dentist_follow_up.id_for_label }}': selected.dataset.followUp,
+          };
+          Object.keys(map).forEach((id)=>{
+            const field = document.getElementById(id);
+            if(field && map[id] !== undefined){
+              field.value = map[id];
+              field.dispatchEvent(new Event('input'));
+            }
+          });
+        });
+      }
+    })();
+  </script>
+{% endblock %}

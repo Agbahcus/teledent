@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% block title %}Consultation - teledent{% endblock %}
+{% block content %}
+  <div class="two-col">
+    <section class="card card-pad" style="box-shadow:none">
+      <div class="row row-between">
+        <div>
+          <div style="font-size:20px;font-weight:700;color:var(--dark-gray)">Consultation from {{ consultation.patient_name }}</div>
+          <div class="text-sm">Submitted {{ consultation.created_at|timesince }} ago</div>
+          <div class="text-sm">{{ consultation.patient_phone }}</div>
+        </div>
+        <div><span class="badge badge--{{ consultation.status }}">{{ consultation.get_status_display }}</span></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="triage-strip" style="margin-bottom:20px">
+        <div>
+          <div class="text-xs" style="font-weight:800;text-transform:uppercase">Structured intake</div>
+          <div style="font-weight:700">{{ consultation.triage_summary }}</div>
+          <div class="text-sm">Duration: {{ consultation.symptom_duration|default:"Not specified" }}</div>
+        </div>
+        <span class="urgency urgency--{{ consultation.urgency }}">{{ consultation.urgency }}</span>
+      </div>
+
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--dark-gray)">Patient's Complaint</div>
+        <div class="complaint-box" style="margin-top:8px">
+          {{ consultation.patient_complaint|linebreaksbr }}
+        </div>
+      </div>
+
+      {% if consultation.images.all %}
+        <div style="margin-top:20px">
+          <div style="font-size:13px;font-weight:700;color:var(--dark-gray);margin-bottom:12px">Photos</div>
+          <div class="thumbs">
+            {% for img in consultation.images.all %}
+              <button class="thumb-button" type="button" data-lightbox-src="{{ img.image_file.url }}" data-lightbox-alt="Consultation photo {{ forloop.counter }}">
+                <img class="thumb" src="{{ img.image_file.url }}" alt="Consultation photo {{ forloop.counter }}" />
+              </button>
+            {% endfor %}
+          </div>
+          <div class="image-assist">
+            <div style="font-size:13px;font-weight:800;color:var(--dark-gray)">AI image assist</div>
+            <div class="text-sm">
+              {{ consultation.images.count }} photo{{ consultation.images.count|pluralize }} attached. Future AI review can flag blurry images, poor lighting, visible swelling, and whether a clearer angle is needed.
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div class="image-assist" style="margin-top:20px">
+          <div style="font-size:13px;font-weight:800;color:var(--dark-gray)">AI image assist</div>
+          <div class="text-sm">No photos were uploaded. Ask the patient for clear front, side, and close-up photos if visual review is needed.</div>
+        </div>
+      {% endif %}
+
+      {% if consultation.status == 'RESPONDED' or consultation.status == 'RESOLVED' %}
+        <div style="margin-top:20px" class="response-box">
+          <div style="font-size:13px;font-weight:700;color:var(--dark-gray)">Your Response</div>
+          <div style="margin-top:16px">
+            <div style="font-size:13px;font-weight:700;color:var(--dark-gray)">Diagnosis:</div>
+            <div style="font-size:13px;color:var(--dark-gray)">{{ consultation.dentist_diagnosis|default:"" |linebreaksbr }}</div>
+          </div>
+          <div style="margin-top:16px">
+            <div style="font-size:13px;font-weight:700;color:var(--dark-gray)">Treatment Plan:</div>
+            <div style="font-size:13px;color:var(--dark-gray)">{{ consultation.dentist_treatment_plan|default:"" |linebreaksbr }}</div>
+          </div>
+          <div style="margin-top:16px">
+            <div style="font-size:13px;font-weight:700;color:var(--dark-gray)">Medications:</div>
+            <div style="font-size:13px;color:var(--dark-gray)">{{ consultation.dentist_medications|default:"None prescribed"|linebreaksbr }}</div>
+          </div>
+          <div style="margin-top:16px">
+            <div style="font-size:13px;font-weight:700;color:var(--dark-gray)">Follow-up:</div>
+            <div style="font-size:13px;color:var(--dark-gray)">{{ consultation.dentist_follow_up|default:""|linebreaksbr }}</div>
+            {% if consultation.follow_up_due %}
+              <div class="text-sm" style="margin-top:6px">Due: {{ consultation.follow_up_due|date:"M d, Y" }}</div>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if consultation.rating %}
+        <div class="rating-box">
+          <div class="stars">★★★★★</div>
+          {% if consultation.rating_comment %}
+            <div class="text-sm" style="font-style:italic;margin-top:8px">"{{ consultation.rating_comment }}"</div>
+          {% endif %}
+        </div>
+      {% endif %}
+    </section>
+
+    <aside class="side-card">
+      <div style="font-size:13px;font-weight:700;color:var(--dark-gray);margin-bottom:8px">Status</div>
+      <div style="margin-bottom:16px">
+        <span class="badge badge--{{ consultation.status }}" style="font-size:16px;padding:8px 10px">{{ consultation.get_status_display }}</span>
+      </div>
+
+      <div style="font-size:13px;font-weight:700;color:var(--dark-gray);margin-bottom:8px">Quick Actions</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        {% if consultation.status == 'NEW' or consultation.status == 'IN_REVIEW' %}
+          <form method="post" action="{% url 'mark_reviewing' consultation.id %}">
+            {% csrf_token %}
+            <button class="btn btn-secondary btn--small btn-full" type="submit">Mark as Reviewing</button>
+          </form>
+        {% endif %}
+        {% if consultation.status == 'IN_REVIEW' %}
+          <a class="btn btn-primary btn--small btn-full" href="{% url 'respond_consultation' consultation.id %}">Submit Response</a>
+        {% endif %}
+        {% if consultation.status == 'RESPONDED' %}
+          <form method="post" action="{% url 'mark_resolved' consultation.id %}">
+            {% csrf_token %}
+            <button class="btn btn-primary btn--small btn-full" type="submit">Mark Resolved</button>
+          </form>
+        {% endif %}
+      </div>
+
+      <div style="font-size:13px;font-weight:700;color:var(--dark-gray);margin-bottom:8px">Patient Info</div>
+      <div class="text-sm" style="color:var(--dark-gray)">{{ consultation.patient_phone }}</div>
+      <div class="text-sm" style="color:var(--dark-gray)">{{ consultation.patient_email }}</div>
+      <div class="text-sm">{{ consultation.created_at|date:"M d, Y - H:i" }}</div>
+      <div class="text-sm" style="color:var(--primary-blue);font-weight:700">
+        Pain level: {{ consultation.pain_level }}/10
+      </div>
+      <div class="text-sm" style="color:var(--warning-orange);font-weight:700">
+        Due today at 5:00 PM
+      </div>
+
+      <div style="margin-top:16px;font-size:13px;font-weight:700;color:var(--dark-gray);margin-bottom:8px">Timeline</div>
+      <div class="text-sm">
+        <div>• Submitted - {{ consultation.created_at|timesince }} ago</div>
+        {% if consultation.status != 'NEW' %}
+          <div>• You started reviewing - recently</div>
+        {% endif %}
+      </div>
+    </aside>
+  </div>
+
+  <div class="lightbox" data-lightbox="true" aria-hidden="true">
+    <button class="lightbox__close" type="button" data-lightbox-close="true" aria-label="Close image preview">X</button>
+    <img class="lightbox__image" src="" alt="" />
+  </div>
+{% endblock %}

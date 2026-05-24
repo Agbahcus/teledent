@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block title %}Profile Settings - teledent{% endblock %}
+{% block content %}
+  <h2 style="margin:0 0 12px">Your Profile</h2>
+
+  <div class="tabs" style="margin-bottom:16px">
+    <a class="tab {% if tab != 'settings' %}tab--active{% endif %}" href="{% url 'profile_settings' %}?tab=profile">PROFILE</a>
+    <a class="tab {% if tab == 'settings' %}tab--active{% endif %}" href="{% url 'profile_settings' %}?tab=settings">SETTINGS</a>
+  </div>
+
+  <section class="card card-pad" style="box-shadow:none">
+    {% if tab == 'settings' %}
+      <form method="post" class="form" novalidate>
+        {% csrf_token %}
+
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--dark-gray)">Notification Preferences</div>
+          <label class="text-sm" style="display:flex;align-items:center;gap:8px;margin-top:12px">
+            <input type="checkbox" name="notify_sms" {% if profile.notify_sms %}checked{% endif %} />
+            <span>Send SMS when new consultation arrives</span>
+          </label>
+          <label class="text-sm" style="display:flex;align-items:center;gap:8px;margin-top:8px">
+            <input type="checkbox" name="notify_email" {% if profile.notify_email %}checked{% endif %} />
+            <span>Send email summaries</span>
+          </label>
+        </div>
+
+        <div style="margin-top:20px">
+          <div style="font-size:13px;font-weight:700;color:var(--dark-gray)">Consultation Settings</div>
+
+          <div class="field {% if settings_form.response_time_hours.errors %}field-error{% endif %}" style="margin-top:12px;max-width:320px">
+            <label class="label" for="{{ settings_form.response_time_hours.id_for_label }}">Expected response time (hours)</label>
+            <input class="input" type="number" name="{{ settings_form.response_time_hours.name }}" id="{{ settings_form.response_time_hours.id_for_label }}" value="{{ settings_form.response_time_hours.value|default_if_none:'24' }}" />
+            <div class="hint">Patients will see this as your expected response time</div>
+            {% for e in settings_form.response_time_hours.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+          </div>
+        </div>
+
+        <div style="margin-top:20px">
+          <div style="font-size:13px;font-weight:700;color:var(--dark-gray)">Display Settings</div>
+          <label class="text-sm" style="display:flex;align-items:center;gap:8px;margin-top:12px;opacity:0.6">
+            <input type="checkbox" disabled />
+            <span>Dark mode</span>
+          </label>
+        </div>
+
+        <button class="btn btn-primary" type="submit" style="width:max-content">Update Settings</button>
+      </form>
+    {% else %}
+      <form method="post" class="form" novalidate>
+        {% csrf_token %}
+
+        <div class="field {% if profile_form.full_name.errors %}field-error{% endif %}">
+          <label class="label" for="{{ profile_form.full_name.id_for_label }}">Full name</label>
+          <input class="input" type="text" name="{{ profile_form.full_name.name }}" id="{{ profile_form.full_name.id_for_label }}" value="{{ profile_form.full_name.value|default_if_none:'' }}" />
+          {% for e in profile_form.full_name.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if user_form.email.errors %}field-error{% endif %}">
+          <label class="label" for="{{ user_form.email.id_for_label }}">Email</label>
+          <input class="input" type="email" name="{{ user_form.email.name }}" id="{{ user_form.email.id_for_label }}" value="{{ user_form.email.value|default_if_none:'' }}" />
+          {% for e in user_form.email.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if user_form.phone.errors %}field-error{% endif %}">
+          <label class="label" for="{{ user_form.phone.id_for_label }}">Phone</label>
+          <input class="input" type="tel" name="{{ user_form.phone.name }}" id="{{ user_form.phone.id_for_label }}" value="{{ user_form.phone.value|default_if_none:'' }}" />
+          {% for e in user_form.phone.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if profile_form.license_number.errors %}field-error{% endif %}">
+          <label class="label" for="{{ profile_form.license_number.id_for_label }}">License number</label>
+          <input class="input" type="text" name="{{ profile_form.license_number.name }}" id="{{ profile_form.license_number.id_for_label }}" value="{{ profile_form.license_number.value|default_if_none:'' }}" />
+          {% for e in profile_form.license_number.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if profile_form.specialty.errors %}field-error{% endif %}">
+          <label class="label" for="{{ profile_form.specialty.id_for_label }}">Specialty</label>
+          {{ profile_form.specialty.as_widget|safe }}
+          <script>
+            (function(){ const el=document.getElementById("{{ profile_form.specialty.id_for_label }}"); if(el){ el.classList.add('select'); } })();
+          </script>
+          {% for e in profile_form.specialty.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if profile_form.state.errors %}field-error{% endif %}">
+          <label class="label" for="{{ profile_form.state.id_for_label }}">State</label>
+          {{ profile_form.state.as_widget|safe }}
+          <script>
+            (function(){ const el=document.getElementById("{{ profile_form.state.id_for_label }}"); if(el){ el.classList.add('select'); } })();
+          </script>
+          {% for e in profile_form.state.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if profile_form.lga.errors %}field-error{% endif %}">
+          <label class="label" for="{{ profile_form.lga.id_for_label }}">Local Government Area (LGA)</label>
+          <input class="input" type="text" name="{{ profile_form.lga.name }}" id="{{ profile_form.lga.id_for_label }}" value="{{ profile_form.lga.value|default_if_none:'' }}" />
+          {% for e in profile_form.lga.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if profile_form.bio.errors %}field-error{% endif %}">
+          <label class="label" for="{{ profile_form.bio.id_for_label }}">Bio</label>
+          <textarea class="textarea" name="{{ profile_form.bio.name }}" id="{{ profile_form.bio.id_for_label }}" maxlength="200">{{ profile_form.bio.value|default_if_none:'' }}</textarea>
+          {% for e in profile_form.bio.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <button class="btn btn-primary" type="submit" style="width:max-content">Update Profile</button>
+      </form>
+    {% endif %}
+  </section>
+{% endblock %}

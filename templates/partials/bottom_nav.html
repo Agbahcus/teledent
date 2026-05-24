@@ -1,0 +1,15 @@
+{% load static %}
+<nav class="bottom-nav" role="navigation" aria-label="Bottom navigation">
+  <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+    <div class="nav-icon">🏠</div>
+    <div class="nav-label text-xs">Dashboard</div>
+  </a>
+  <a href="{% url 'consultations' %}" class="nav-item {% if request.resolver_match.url_name == 'consultations' %}active{% endif %}">
+    <div class="nav-icon">📋</div>
+    <div class="nav-label text-xs">Consults</div>
+  </a>
+  <a href="{% url 'profile_settings' %}" class="nav-item {% if request.resolver_match.url_name == 'profile_settings' %}active{% endif %}">
+    <div class="nav-icon">👤</div>
+    <div class="nav-label text-xs">Profile</div>
+  </a>
+</nav>

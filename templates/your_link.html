@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Your Link - teledent{% endblock %}
+{% block content %}
+  <div class="auth-page" style="align-items:flex-start">
+    <div class="card" style="width:100%;max-width:520px;box-shadow:none">
+      <div class="card-pad">
+        <div style="font-size:20px;font-weight:700;color:var(--dark-gray);margin-bottom:6px">Share Your Consultation Link</div>
+        <div class="text-sm" style="margin-bottom:24px">Give this link to your patients to submit consultations</div>
+
+        <div style="background:var(--light-gray);padding:16px;border-radius:var(--radius);border:1px dashed var(--primary-blue);margin-bottom:16px">
+          <div style="font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;font-size:13px;color:var(--dark-gray)" id="publicUrl">
+            {{ public_url }}
+          </div>
+        </div>
+
+        <div class="row row-start" style="gap:12px;margin-bottom:16px">
+          <button class="btn btn-secondary btn--small" type="button" id="copyBtn" style="height:40px">Copy Link</button>
+          <div class="text-sm" id="copyMsg" style="color:var(--success-green);display:none">Copied!</div>
+        </div>
+
+        <img src="{{ qr_data_url }}" alt="QR code" style="width:100px;height:100px;border-radius:var(--radius);border:1px solid var(--border)" />
+
+        <div class="text-sm" style="margin-top:24px;color:var(--medium-gray)">Share on:</div>
+        <div class="text-sm" style="color:var(--medium-gray)">WhatsApp, Instagram, clinic wall, business cards, etc.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const msg = document.getElementById('copyMsg');
+      const urlEl = document.getElementById('publicUrl');
+      if(!btn || !msg || !urlEl) return;
+      btn.addEventListener('click', async ()=>{
+        try{
+          await navigator.clipboard.writeText(urlEl.textContent.trim());
+          msg.style.display = 'block';
+          window.setTimeout(()=>{ msg.style.display='none'; }, 2000);
+        }catch(e){}
+      });
+    })();
+  </script>
+{% endblock %}

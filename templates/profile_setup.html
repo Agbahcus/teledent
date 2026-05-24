@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block title %}Profile Setup - teledent{% endblock %}
+{% block content %}
+  <div class="two-col-60">
+    <section class="card card-pad" style="box-shadow:none">
+      <h2 style="margin:0 0 6px">Complete Your Profile</h2>
+      <div class="text-sm" style="margin-bottom:24px">Add your professional details</div>
+
+      <form method="post" class="form" novalidate>
+        {% csrf_token %}
+
+        <div class="field {% if form.license_number.errors %}field-error{% endif %}">
+          <label class="label" for="{{ form.license_number.id_for_label }}">License Number<span class="req">*</span></label>
+          <input class="input" type="text" name="{{ form.license_number.name }}" id="{{ form.license_number.id_for_label }}" value="{{ form.license_number.value|default_if_none:'' }}" placeholder="Your dental license number" />
+          <div class="hint">Used to verify your credentials</div>
+          {% for e in form.license_number.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if form.specialty.errors %}field-error{% endif %}">
+          <label class="label" for="{{ form.specialty.id_for_label }}">Specialty<span class="req">*</span></label>
+          <select class="select" name="{{ form.specialty.name }}" id="{{ form.specialty.id_for_label }}">
+            <option value="">Select a specialty</option>
+            {% for val,label in form.fields.specialty.choices %}
+              <option value="{{ val }}" {% if form.specialty.value == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          {% for e in form.specialty.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if form.state.errors %}field-error{% endif %}">
+          <label class="label" for="{{ form.state.id_for_label }}">State<span class="req">*</span></label>
+          {{ form.state.as_widget|safe }}
+          <script>
+            (function(){ const el=document.getElementById("{{ form.state.id_for_label }}"); if(el){ el.classList.add('select'); } })();
+          </script>
+          {% for e in form.state.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if form.lga.errors %}field-error{% endif %}">
+          <label class="label" for="{{ form.lga.id_for_label }}">Local Government Area (LGA)</label>
+          <input class="input" type="text" name="{{ form.lga.name }}" id="{{ form.lga.id_for_label }}" value="{{ form.lga.value|default_if_none:'' }}" placeholder="e.g., Ikoyi, Lekki" />
+          {% for e in form.lga.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if form.bio.errors %}field-error{% endif %}">
+          <label class="label" for="{{ form.bio.id_for_label }}">Bio / Professional Summary</label>
+          <textarea class="textarea" name="{{ form.bio.name }}" id="{{ form.bio.id_for_label }}" maxlength="200" placeholder="Brief description of your practice and experience" style="height:120px">{{ form.bio.value|default_if_none:'' }}</textarea>
+          <div class="text-xs" style="text-align:right" id="bioCount">0/200</div>
+          {% for e in form.bio.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if form.consultation_fee.errors %}field-error{% endif %}">
+          <label class="label" for="{{ form.consultation_fee.id_for_label }}">Consultation Fee (₦)<span class="req">*</span></label>
+          <input class="input" type="number" name="{{ form.consultation_fee.name }}" id="{{ form.consultation_fee.id_for_label }}" value="{{ form.consultation_fee.value|default_if_none:'' }}" placeholder="5000" />
+          <div class="hint">Suggested: ₦3,000 - ₦10,000</div>
+          {% for e in form.consultation_fee.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        {% if form.non_field_errors %}
+          {% for e in form.non_field_errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        {% endif %}
+
+        <button class="btn btn-primary btn-full" type="submit">Save Profile</button>
+      </form>
+    </section>
+
+    <aside class="preview">
+      <div class="preview__ph">This is how patients will see you</div>
+      <div class="card" style="box-shadow:none">
+        <div class="card-pad">
+          <div style="font-size:16px;font-weight:700;color:var(--dark-gray)" id="pvName">{{ profile.full_name }}</div>
+          <div class="text-sm" id="pvSpec">{{ profile.specialty|default:"[Selected specialty]" }}</div>
+          <div class="text-sm" id="pvLoc">{{ profile.state|default:"[State]" }}{% if profile.lga %}, {{ profile.lga }}{% else %}{% endif %}</div>
+          <div style="font-size:13px;font-weight:700;color:var(--primary-blue);margin-top:8px" id="pvFee">
+            ₦{% if profile.consultation_fee %}{{ profile.consultation_fee|floatformat:0 }}{% else %}[Amount]{% endif %} per consultation
+          </div>
+          <div style="margin-top:12px;font-size:12px;color:var(--dark-gray)" id="pvBio">
+            {% if profile.bio %}{{ profile.bio|truncatechars:100 }}{% else %}[First 100 chars of bio]...{% endif %}
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    (function(){
+      const bio = document.getElementById('{{ form.bio.id_for_label }}');
+      const count = document.getElementById('bioCount');
+      const pvSpec = document.getElementById('pvSpec');
+      const pvLoc = document.getElementById('pvLoc');
+      const pvFee = document.getElementById('pvFee');
+      const pvBio = document.getElementById('pvBio');
+      const specialty = document.getElementById('{{ form.specialty.id_for_label }}');
+      const state = document.getElementById('{{ form.state.id_for_label }}');
+      const lga = document.getElementById('{{ form.lga.id_for_label }}');
+      const fee = document.getElementById('{{ form.consultation_fee.id_for_label }}');
+
+      function upd(){
+        if (bio && count) count.textContent = (bio.value || '').length + '/200';
+        if (specialty && pvSpec) pvSpec.textContent = specialty.options[specialty.selectedIndex]?.text || '[Selected specialty]';
+        if (state && pvLoc) {
+          const s = state.value || '[State]';
+          const l = (lga && lga.value) ? (', ' + lga.value) : '';
+          pvLoc.textContent = s + l;
+        }
+        if (fee && pvFee) pvFee.textContent = '₦' + (fee.value || '[Amount]') + ' per consultation';
+        if (bio && pvBio) pvBio.textContent = (bio.value || '[First 100 chars of bio]...').slice(0,100) + ((bio.value||'').length>100?'...':'');
+      }
+      ['input','change'].forEach((ev)=>{
+        [bio,specialty,state,lga,fee].forEach((el)=>{ if(el){ el.addEventListener(ev, upd); } });
+      });
+      upd();
+    })();
+  </script>
+{% endblock %}

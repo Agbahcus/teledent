@@ -1,0 +1,42 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}teledent{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/app.css' %}" />
+    <script defer src="{% static 'js/app.js' %}"></script>
+  </head>
+  <body>
+    {% include 'partials/navbar.html' %}
+
+    {% if user.is_authenticated %}
+      {% include 'partials/sidebar.html' %}
+    {% endif %}
+
+    <main class="main {% if not user.is_authenticated %}main--no-sidebar{% endif %} {% block main_class %}{% endblock %}">
+      {% if messages %}
+        <div class="toast-wrap" aria-live="polite" aria-atomic="true">
+          {% for message in messages %}
+            <div class="toast {% if message.tags == 'error' %}toast--error{% endif %}" data-toast-autodismiss="true">
+              <div class="text-sm">{{ message }}</div>
+              <button class="toast__close" type="button" onclick="closeToast(this)" aria-label="Close">X</button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+
+    {% if user.is_authenticated %}
+      <footer class="footer app-footer">
+        <div class="text-sm">&copy; 2025 teledent. For dentists in Nigeria.</div>
+      </footer>
+    {% endif %}
+    {% if user.is_authenticated %}
+      {% include 'partials/bottom_nav.html' %}
+    {% endif %}
+  </body>
+</html>

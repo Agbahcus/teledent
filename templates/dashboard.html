@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard - teledent{% endblock %}
+{% block content %}
+  <div class="page-head">
+    <div>
+      <div class="page-kicker">Dentist dashboard</div>
+      <h1>Consultation overview</h1>
+      <p>Track new patient requests, current reviews, and completed responses.</p>
+    </div>
+    <a class="btn btn-secondary btn--small" href="{% url 'your_link' %}">Share Link</a>
+  </div>
+
+  <div class="stats">
+    <div class="card card-pad-sm stat-card">
+      <div class="stat-label">New Consultations</div>
+      <div class="stat-num" style="color:var(--primary-blue)">{{ counts.NEW }}</div>
+      <div class="text-sm">Awaiting your review</div>
+    </div>
+    <div class="card card-pad-sm stat-card">
+      <div class="stat-label">In Review</div>
+      <div class="stat-num" style="color:var(--warning-orange)">{{ counts.IN_REVIEW }}</div>
+      <div class="text-sm">Currently reviewing</div>
+    </div>
+    <div class="card card-pad-sm stat-card">
+      <div class="stat-label">Responded</div>
+      <div class="stat-num" style="color:var(--success-green)">{{ counts.RESPONDED }}</div>
+      <div class="text-sm">Awaiting patient rating</div>
+    </div>
+    <div class="card card-pad-sm stat-card">
+      <div class="stat-label">Urgent Queue</div>
+      <div class="stat-num" style="color:var(--error-red)">{{ urgent_count }}</div>
+      <div class="text-sm">Needs faster attention</div>
+    </div>
+    <div class="card card-pad-sm stat-card">
+      <div class="stat-label">Follow-ups</div>
+      <div class="stat-num" style="color:var(--primary-blue)">{{ follow_up_count }}</div>
+      <div class="text-sm">Scheduled check-ins</div>
+    </div>
+  </div>
+
+  <div class="section dashboard-panel">
+    <h3 style="margin:0 0 10px">Your Consultations</h3>
+
+    <div class="tabs">
+      <a class="tab {% if status_filter == 'ALL' %}tab--active{% endif %}" href="{% url 'dashboard' %}?status=ALL">ALL</a>
+      <a class="tab {% if status_filter == 'NEW' %}tab--active{% endif %}" href="{% url 'dashboard' %}?status=NEW">
+        NEW {% if counts.NEW %}<span class="badge badge--NEW" style="margin-left:6px"> {{ counts.NEW }} </span>{% endif %}
+      </a>
+      <a class="tab {% if status_filter == 'IN_REVIEW' %}tab--active{% endif %}" href="{% url 'dashboard' %}?status=IN_REVIEW">IN REVIEW</a>
+      <a class="tab {% if status_filter == 'RESPONDED' %}tab--active{% endif %}" href="{% url 'dashboard' %}?status=RESPONDED">RESPONDED</a>
+    </div>
+
+    {% if consultations %}
+      <div class="list">
+        <div class="consult-head">
+          <div>Patient Name</div>
+          <div>Complaint</div>
+          <div>Submitted</div>
+          <div>Status</div>
+          <div>Action</div>
+        </div>
+        {% for c in consultations %}
+          <a class="consult-row" href="{% url 'view_consultation' c.id %}">
+            <div class="truncate" style="font-weight:700">{{ c.patient_name }}</div>
+            <div>
+              <div class="truncate text-sm">{{ c.patient_complaint|truncatechars:50 }}</div>
+              <div class="text-xs">{{ c.triage_summary }}</div>
+            </div>
+            <div class="text-sm">{{ c.created_at|date:"M d, Y" }}</div>
+            <div>
+              <span class="badge badge--{{ c.status }}">{{ c.get_status_display }}</span>
+              <span class="urgency urgency--{{ c.urgency }}" style="margin-top:6px">{{ c.urgency }}</span>
+            </div>
+            <div class="text-sm" style="color:var(--primary-blue);font-weight:700">VIEW</div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-mark">td</div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:8px">No consultations yet</div>
+        <div class="text-sm" style="margin-bottom:16px">Share your link to get started</div>
+        <a class="btn btn-primary btn--small" href="{% url 'your_link' %}">Copy Your Link</a>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

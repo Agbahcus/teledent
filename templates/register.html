@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Register - teledent{% endblock %}
+{% block content %}
+  <div class="auth-page">
+    <div class="auth-card">
+      <h2 class="auth-title">Create Dentist Account</h2>
+
+      <form method="post" class="form" novalidate>
+        {% csrf_token %}
+
+        <div class="field {% if form.full_name.errors %}field-error{% endif %}">
+          <label class="label" for="{{ form.full_name.id_for_label }}">Full Name</label>
+          <input class="input" type="text" name="{{ form.full_name.name }}" id="{{ form.full_name.id_for_label }}" value="{{ form.full_name.value|default_if_none:'' }}" placeholder="Dr. Chioma Obi" />
+          {% for e in form.full_name.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if form.email.errors %}field-error{% endif %}">
+          <label class="label" for="{{ form.email.id_for_label }}">Email Address</label>
+          <input class="input" type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" value="{{ form.email.value|default_if_none:'' }}" placeholder="chioma@clinic.com" />
+          {% for e in form.email.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if form.phone.errors %}field-error{% endif %}">
+          <label class="label" for="{{ form.phone.id_for_label }}">Phone Number</label>
+          <input class="input" type="tel" name="{{ form.phone.name }}" id="{{ form.phone.id_for_label }}" value="{{ form.phone.value|default_if_none:'' }}" placeholder="08012345678" />
+          <div class="hint">Nigerian format (08xxxxxxxxx)</div>
+          {% for e in form.phone.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if form.password.errors %}field-error{% endif %}">
+          <label class="label" for="{{ form.password.id_for_label }}">Password</label>
+          <input class="input" type="password" name="{{ form.password.name }}" id="{{ form.password.id_for_label }}" placeholder="Min 8 characters" />
+          {% for e in form.password.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if form.confirm_password.errors %}field-error{% endif %}">
+          <label class="label" for="{{ form.confirm_password.id_for_label }}">Confirm Password</label>
+          <input class="input" type="password" name="{{ form.confirm_password.name }}" id="{{ form.confirm_password.id_for_label }}" />
+          {% for e in form.confirm_password.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="field {% if form.agree_terms.errors %}field-error{% endif %}">
+          <label class="text-sm" style="display:flex;align-items:center;gap:8px">
+            <input type="checkbox" name="{{ form.agree_terms.name }}" {% if form.agree_terms.value %}checked{% endif %} />
+            <span>I agree to Terms of Service</span>
+            <a class="nav-link" href="#" style="text-decoration:underline">Terms</a>
+          </label>
+          {% for e in form.agree_terms.errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        </div>
+
+        {% if form.non_field_errors %}
+          {% for e in form.non_field_errors %}<div class="form-error">! {{ e }}</div>{% endfor %}
+        {% endif %}
+
+        <button class="btn btn-primary btn-full" type="submit">Create Account</button>
+
+        <div class="text-sm">
+          Already have an account?
+          <a class="nav-link" href="{% url 'login' %}" style="text-decoration:underline">Sign In</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

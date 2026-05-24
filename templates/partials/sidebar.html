@@ -1,0 +1,36 @@
+<aside class="sidebar" data-sidebar="true">
+  {% with active=request.resolver_match.url_name %}
+    <div class="sidebar-kicker">Workspace</div>
+
+    <a class="side-item {% if active == 'dashboard' %}side-item--active{% else %}side-item--inactive{% endif %}" href="{% url 'dashboard' %}">
+      <span class="side-icon">D</span>
+      <span>Dashboard</span>
+    </a>
+
+    <div style="margin-top:8px"></div>
+    <a class="side-item {% if active == 'dashboard' %}side-item--active{% else %}side-item--inactive{% endif %}" href="{% url 'dashboard' %}">
+      <span class="side-icon">C</span>
+      <span>Consultations</span>
+      {% if counts.NEW %}
+        <span class="badge-count">{{ counts.NEW }}</span>
+      {% endif %}
+    </a>
+    <div class="side-sub">
+      <a class="side-item side-item--inactive" style="height:36px" href="{% url 'dashboard' %}?status=NEW">New</a>
+      <a class="side-item side-item--inactive" style="height:36px" href="{% url 'dashboard' %}?status=IN_REVIEW">In Review</a>
+      <a class="side-item side-item--inactive" style="height:36px" href="{% url 'dashboard' %}?status=RESPONDED">Responded</a>
+      <a class="side-item side-item--inactive" style="height:36px" href="{% url 'dashboard' %}?status=ALL">All</a>
+    </div>
+
+    <div style="margin-top:8px"></div>
+    <a class="side-item {% if active == 'profile_settings' %}side-item--active{% else %}side-item--inactive{% endif %}" href="{% url 'profile_settings' %}?tab=profile">
+      <span class="side-icon">P</span>
+      <span>Profile</span>
+    </a>
+    <a class="side-item {% if active == 'profile_settings' %}side-item--active{% else %}side-item--inactive{% endif %}" href="{% url 'profile_settings' %}?tab=settings">
+      <span class="side-icon">S</span>
+      <span>Settings</span>
+    </a>
+  {% endwith %}
+</aside>
+
